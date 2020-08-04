@@ -2,7 +2,7 @@ import 'package:bytebank/models/contact.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-Future <Database>  createDatabase(){   //criando database
+Future<Database>  createDatabase(){   //criando database
   return getDatabasesPath().then((dbPath){
       final String path = join(dbPath,'bytebanck.db');
           return openDatabase(path,onCreate: (db,version){
@@ -28,7 +28,7 @@ Future<int> save(Contact contact){
   });
 }
 
-Future <List<Contact>> findALl(){
+Future<List<Contact>> findALl(){
   return createDatabase().then((db){
    return db.query('contacts').then((maps){
       final List<Contact> contacts = List();
