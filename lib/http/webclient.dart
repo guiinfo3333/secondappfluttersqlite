@@ -2,11 +2,14 @@
 
 
 import 'package:http/http.dart';
+import 'package:http_interceptor/http_client_with_interceptor.dart';
 
-void findALl() async{
- final Response response = await  get('http://localhost:8080/transactions');
- print(response.body);
-}
+import 'interceptors/logging_interceptor.dart';
 
 
+final Client client = HttpClientWithInterceptor.build(
+  interceptors: [LoggingInterceptor()],
+); //criando um client atraves de uma lib que intercepta as minhas requisicoes
+
+const String baseUrl = 'http://192.168.2.88:8080/transactions';
 

@@ -1,6 +1,8 @@
+import 'package:bytebank/components/progress.dart';
 import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/screens/contact_form.dart';
+import 'package:bytebank/screens/transaction_form.dart';
 import 'package:flutter/material.dart';
 
 class ContactsList extends StatefulWidget {
@@ -9,9 +11,8 @@ class ContactsList extends StatefulWidget {
 }
 
 class _ContactsListState extends State<ContactsList> {
-
-
   final ContactDao _dao = ContactDao();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,17 +35,7 @@ class _ContactsListState extends State<ContactsList> {
                 break;
               case ConnectionState
                   .waiting: //ainda esta carregando aí eu posso colocar o widtget de reload
-                return Center(
-                  //para que nao tiver carregado ainda ele ficar rodando a barra de progresso
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      CircularProgressIndicator(),
-                      Text('Loading')
-                    ],
-                  ),
-                );
+                return Progress();
                 break;
               case ConnectionState
                   .active: //tem o dado disponivel so que nao foi finalizado, como um download
@@ -56,8 +47,13 @@ class _ContactsListState extends State<ContactsList> {
                 return ListView.builder(
                   itemBuilder: (context, index) {
                     final Contact contact = contacts[index];
-                    return _ContactItem(
-                        contact); //retorna um contact item, ques esta escrito em baixo
+                    return _ContactItem(contact, onclick: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => TransactionForm(contact),
+                        ),
+                      );
+                    }); //retorna um contact item, ques esta escrito em baixo
                   },
                   itemCount: contacts.length, //por meio de uma lista
                 );
@@ -85,13 +81,18 @@ class _ContactsListState extends State<ContactsList> {
 //para fazer uma lista dinamica
 class _ContactItem extends StatelessWidget {
   final Contact contact;
+  final Function onclick;
 
-  _ContactItem(this.contact);
+  _ContactItem(
+    this.contact, {
+    @required this.onclick,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
+      onTap: () => onclick(),
       title: Text(
         contact.name,
         style: TextStyle(

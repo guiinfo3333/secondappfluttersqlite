@@ -1,5 +1,4 @@
 
-import 'package:bytebank/http/webclient.dart';
 import 'package:flutter/material.dart';
 
 import 'screens/dashboard.dart';
@@ -8,8 +7,8 @@ import 'screens/dashboard.dart';
 void main() {
   runApp(Bytebank());
 
-  findALl();
-
+//findALl().then((transactions) => print('new transactions ${transactions}'));
+//  save(Transaction(200.0, Contact(0, 'Gui', 2000))).then((transaction) => print(transaction));
 }
 
 
