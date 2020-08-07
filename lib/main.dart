@@ -1,12 +1,13 @@
 
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
-import 'components/transaction_auth_dialog.dart';
 import 'screens/dashboard.dart';
 
 
 void main() {
   runApp(Bytebank());
+  print(Uuid().v4());
 
 //findALl().then((transactions) => print('new transactions ${transactions}'));
 //  save(Transaction(200.0, Contact(0, 'Gui', 2000))).then((transaction) => print(transaction));
