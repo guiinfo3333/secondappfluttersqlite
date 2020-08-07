@@ -5,11 +5,12 @@ import 'package:http/http.dart';
 
 import '../webclient.dart';
 
-class TransactionWebClient{
+class TransactionWebClient {
   Future<List<Transaction>> findALl() async {
-    final Response response =
-    await client.get(baseUrl).timeout(
-        Duration(seconds: 5)); //se nao tiver o time out vai carregar para sempre
+    final Response response = await client.get(baseUrl);
+
+//        .timeout(Duration(
+//        seconds: 5)); //se nao tiver o time out vai carregar para sempre
 
     print(response);
 
@@ -20,31 +21,38 @@ class TransactionWebClient{
     //============
   }
 
-  Future<Transaction> save(Transaction transaction) async {
-
-
+  Future<Transaction> save(Transaction transaction, String password) async {
     final String transactionJson = jsonEncode(transaction.toJson());
 
+    final Response response = await client.post(baseUrl,
+        headers: {
+          'Content-type': 'application/json',
+          'password': password,
+        },
+        body: transactionJson);
 
+    if (response.statusCode == 200) {
+      return Transaction.fromJson(jsonDecode(response.body));
+    }
 
-    final Response response = await client.post(baseUrl, headers: {
-      'Content-type' : 'application/json',
-      'password' : '1000'
-    }, body: transactionJson);
-
-
-
-    return Transaction.fromJson(jsonDecode(response.body));
+    throw HttpException(_statusCodeResponses[response.statusCode]);
   }
+
+
+
+  static final Map<int, String> _statusCodeResponses = {
+    400: 'there was an error submitting transaction',
+    401: 'authentication failed'
+  } ;
 
   //metodo extraido com ctrl+alt+m
   List<Transaction> _toTransactions(Response response) {
-      final List<dynamic> decodedJson = jsonDecode(response.body);
+    final List<dynamic> decodedJson = jsonDecode(response.body);
 
-     final List<Transaction> transactions = decodedJson.map((dynamic json ){  //pega um elemento e transforma em lista
-          return Transaction.fromJson(json);
-
-      }).toList();
+    final List<Transaction> transactions = decodedJson.map((dynamic json) {
+      //pega um elemento e transforma em lista
+      return Transaction.fromJson(json);
+    }).toList();
 
 //    //criando uma lista de transferencias
 //    final List<Transaction> transactions = List();
@@ -73,5 +81,14 @@ class TransactionWebClient{
 //    };
 //    return transactionMap;
 //  }
+
+}
+
+class HttpException implements Exception {
+  final String message;
+
+  HttpException(this.message);
+
+
 
 }
